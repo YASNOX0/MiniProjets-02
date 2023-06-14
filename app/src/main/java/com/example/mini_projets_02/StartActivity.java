@@ -1,16 +1,15 @@
 package com.example.mini_projets_02;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.Request;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -34,30 +33,25 @@ public class StartActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://dummyjson.com/quotes/random";
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            tv_startActQuote.setText(jsonObject.getString("quote"));
-                            tv_startActAuthor.setText(jsonObject.getString("author"));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    tv_startActQuote.setText(response.getString("quote"));
+                    tv_startActAuthor.setText(response.getString("author"));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
 
-                    }
-                }, new Response.ErrorListener() {
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                tv_startActQuote.setText("That didn't work!");
+
             }
         });
 
-        // Add the request to the RequestQueue.
-        stringRequest.setTag("TAG");
-        queue.add(stringRequest);
+        queue.add(jsonObjectRequest);
 
         btn_startActPass.setOnClickListener(v -> {
             finish();
