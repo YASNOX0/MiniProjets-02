@@ -15,10 +15,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Random;
+
 public class StartActivity extends AppCompatActivity {
 
     TextView tv_startActQuote, tv_startActAuthor;
     Button btn_startActPass;
+    private final int Min = 25;
+    private final int Max = 80;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +33,12 @@ public class StartActivity extends AppCompatActivity {
         tv_startActAuthor = findViewById(R.id.tv_startActAuthor);
         btn_startActPass = findViewById(R.id.btn_startActPass);
 
+        Random random = new Random();
+        int randNbr = random.nextInt(Max - Min + 1) + Min;
+
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://dummyjson.com/quotes/random";
+        String url = "https://dummyjson.com/quotes/"+randNbr;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new Response.Listener<JSONObject>() {
             @Override
