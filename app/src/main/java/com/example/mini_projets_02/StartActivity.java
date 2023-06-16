@@ -29,6 +29,8 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ImageView iv_startActIsFavorite;
     boolean isFavorite = false;
+    FavoriteQuotesDbOpenHelper db;
+    TextView tv_startActId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class StartActivity extends AppCompatActivity {
         btn_startActPass = findViewById(R.id.btn_startActPass);
         tb_startActPinUnpin = findViewById(R.id.tb_startActPinUnpin);
         iv_startActIsFavorite = findViewById(R.id.iv_startActIsFavorite);
+        tv_startActId = findViewById(R.id.tv_startActId);
 
         //region Pin | Unpin Quote
         sharedPreferences = getSharedPreferences("pinned-quote", MODE_PRIVATE);
@@ -75,24 +78,25 @@ public class StartActivity extends AppCompatActivity {
         });
         //endregion
 
+        db = new FavoriteQuotesDbOpenHelper(this);
         iv_startActIsFavorite.setOnClickListener(v -> {
+            int id = Integer.parseInt(tv_startActId.getText().toString().substring(1));
             if (isFavorite) {
                 iv_startActIsFavorite.setImageResource(R.drawable.dislike);
+                db.deleteQuote(id);
             } else {
                 iv_startActIsFavorite.setImageResource(R.drawable.like);
+                String quote = tv_startActQuote.getText().toString();
+                String author = tv_startActAuthor.getText().toString();
+                db.saveQuote(new Quote(id, quote, author));
             }
             isFavorite = !isFavorite;
+
+            for (Quote quote : db.getAll()) {
+                Log.e("Sqlite", quote.toString());
+            }
+
         });
-
-
-        FavoriteQuotesDbOpenHelper db = new FavoriteQuotesDbOpenHelper(this);
-//        db.saveQuote(new Quote(1, "a", "b"));
-//        db.saveQuote(new Quote(2, "c", "d"));
-//        db.saveQuote(new Quote(3, "e", "f"));
-//        db.deleteQuote(3);
-        for (Quote quote : db.getAll()) {
-            Log.e("Sqlite", quote.toString());
-        }
 
         btn_startActPass.setOnClickListener(v -> {
             finish();
@@ -107,6 +111,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
+                    tv_startActId.setText(String.format("#%d", response.getInt("id")));
                     tv_startActQuote.setText(response.getString("quote"));
                     tv_startActAuthor.setText(response.getString("author"));
                 } catch (JSONException e) {

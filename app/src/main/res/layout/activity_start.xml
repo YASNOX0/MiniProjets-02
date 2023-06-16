@@ -11,14 +11,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="@string/quote"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_startActAuthor"
         app:layout_constraintEnd_toStartOf="@+id/iv_startActIsFavorite"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tb_startActPinUnpin"
+        app:layout_constraintTop_toBottomOf="@+id/tv_startActId"
+        app:layout_constraintVertical_bias="0.5"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
@@ -70,4 +73,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tb_startActPinUnpin"
         app:srcCompat="@drawable/dislike" />
+
+    <TextView
+        android:id="@+id/tv_startActId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="id"
+        android:textColor="#737171"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_startActQuote"
+        app:layout_constraintEnd_toStartOf="@+id/iv_startActIsFavorite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintVertical_chainStyle="packed" />
 </androidx.constraintlayout.widget.ConstraintLayout>
