@@ -82,8 +82,12 @@ public class StartActivity extends AppCompatActivity {
             isFavorite = !isFavorite;
         });
 
+
         FavoriteQuotesDbOpenHelper db = new FavoriteQuotesDbOpenHelper(this);
-        db.add(1, "a", "b");
+//        db.saveQuote(1, "a", "b");
+//        db.saveQuote(2, "c", "d");
+//        db.saveQuote(3, "e", "f");
+        db.deleteQuote(3);
         db.getAll();
 
         btn_startActPass.setOnClickListener(v -> {

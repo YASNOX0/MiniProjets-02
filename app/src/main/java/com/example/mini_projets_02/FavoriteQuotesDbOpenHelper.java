@@ -16,6 +16,8 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Quote.db";
 
+    SQLiteDatabase db = FavoriteQuotesDbOpenHelper.this.getWritableDatabase();
+
     private static final String SQL_CREATE_FAVORITE_QUOTES = String.format("CREATE TABLE %s (" +
                     "%s INTEGER PRIMARY KEY," +
                     "%s TEXT," +
@@ -43,8 +45,7 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void add(int id, String quote, String author) {
-        SQLiteDatabase db = FavoriteQuotesDbOpenHelper.this.getWritableDatabase();
+    public void saveQuote(int id, String quote, String author) {
         ContentValues values = new ContentValues();
         values.put(FavoriteQuotesContract.Infos.COLUMN_NAME_ID, id);
         values.put(FavoriteQuotesContract.Infos.COLUMN_NAME_QUOTE, quote);
@@ -52,9 +53,13 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         db.insert(FavoriteQuotesContract.Infos.TABLE_NAME, null, values);
     }
 
-    public void getAll() {
-        SQLiteDatabase db = FavoriteQuotesDbOpenHelper.this.getWritableDatabase();
+    public void deleteQuote(int id){
+        String selection = FavoriteQuotesContract.Infos.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+        db.delete(FavoriteQuotesContract.Infos.TABLE_NAME , selection , selectionArgs);
+    }
 
+    public void getAll() {
 
         String[] projection = {
                 FavoriteQuotesContract.Infos.COLUMN_NAME_ID,
