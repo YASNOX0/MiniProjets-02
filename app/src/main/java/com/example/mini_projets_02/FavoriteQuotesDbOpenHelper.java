@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.example.mini_projets_02.db.FavoriteQuotesContract;
+import com.example.mini_projets_02.models.Quote;
+
+import java.util.ArrayList;
 
 public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
 
@@ -45,7 +47,7 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void saveQuote(int id, String quote, String author) {
+    private void addQuote(int id, String quote, String author) {
         ContentValues values = new ContentValues();
         values.put(FavoriteQuotesContract.Infos.COLUMN_NAME_ID, id);
         values.put(FavoriteQuotesContract.Infos.COLUMN_NAME_QUOTE, quote);
@@ -53,14 +55,18 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         db.insert(FavoriteQuotesContract.Infos.TABLE_NAME, null, values);
     }
 
-    public void deleteQuote(int id){
-        String selection = FavoriteQuotesContract.Infos.COLUMN_NAME_ID + " = ?";
-        String[] selectionArgs = {Integer.toString(id)};
-        db.delete(FavoriteQuotesContract.Infos.TABLE_NAME , selection , selectionArgs);
+    public void saveQuote(Quote quote) {
+        addQuote(quote.getId(), quote.getQuote(), quote.getAuthor());
     }
 
-    public void getAll() {
+    public void deleteQuote(int id) {
+        String selection = FavoriteQuotesContract.Infos.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+        db.delete(FavoriteQuotesContract.Infos.TABLE_NAME, selection, selectionArgs);
+    }
 
+    public ArrayList<Quote> getAll() {
+        ArrayList<Quote> quotes = new ArrayList<>();
         String[] projection = {
                 FavoriteQuotesContract.Infos.COLUMN_NAME_ID,
                 FavoriteQuotesContract.Infos.COLUMN_NAME_QUOTE,
@@ -81,9 +87,10 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(FavoriteQuotesContract.Infos.COLUMN_NAME_ID));
             String quote = cursor.getString(cursor.getColumnIndexOrThrow(FavoriteQuotesContract.Infos.COLUMN_NAME_QUOTE));
             String author = cursor.getString(cursor.getColumnIndexOrThrow(FavoriteQuotesContract.Infos.COLUMN_NAME_AUTHOR));
-            Log.e("Sqlite", String.format("Quote , %d , %s ,%s", id, quote, author));
+            quotes.add(new Quote(id, quote, author));
         }
         cursor.close();
+        return quotes;
     }
 
 }

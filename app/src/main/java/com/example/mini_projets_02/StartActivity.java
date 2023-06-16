@@ -2,6 +2,7 @@ package com.example.mini_projets_02;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.mini_projets_02.models.Quote;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,13 +43,13 @@ public class StartActivity extends AppCompatActivity {
 
         //region Pin | Unpin Quote
         sharedPreferences = getSharedPreferences("pinned-quote", MODE_PRIVATE);
-        String quote = sharedPreferences.getString("quote", null);
+        String pinnedQuote = sharedPreferences.getString("quote", null);
 
-        if (quote == null) {
+        if (pinnedQuote == null) {
             getRandomQuote();
         } else {
             String author = sharedPreferences.getString("author", null);
-            tv_startActQuote.setText(quote);
+            tv_startActQuote.setText(pinnedQuote);
             tv_startActAuthor.setText(author);
             tb_startActPinUnpin.setChecked(true);
         }
@@ -84,11 +86,13 @@ public class StartActivity extends AppCompatActivity {
 
 
         FavoriteQuotesDbOpenHelper db = new FavoriteQuotesDbOpenHelper(this);
-//        db.saveQuote(1, "a", "b");
-//        db.saveQuote(2, "c", "d");
-//        db.saveQuote(3, "e", "f");
-        db.deleteQuote(3);
-        db.getAll();
+//        db.saveQuote(new Quote(1, "a", "b"));
+//        db.saveQuote(new Quote(2, "c", "d"));
+//        db.saveQuote(new Quote(3, "e", "f"));
+//        db.deleteQuote(3);
+        for (Quote quote : db.getAll()) {
+            Log.e("Sqlite", quote.toString());
+        }
 
         btn_startActPass.setOnClickListener(v -> {
             finish();
