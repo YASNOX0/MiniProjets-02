@@ -93,4 +93,27 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         return quotes;
     }
 
+    public boolean isFavorite(int id) {
+        String[] projection = {
+                FavoriteQuotesContract.Infos.COLUMN_NAME_ID,
+        };
+
+        String selection = FavoriteQuotesContract.Infos.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+
+        Cursor cursor = db.query(
+                FavoriteQuotesContract.Infos.TABLE_NAME,   // The table to query
+                projection,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        boolean state = cursor.moveToNext();
+        cursor.close();
+        return state;
+    }
+
 }

@@ -111,9 +111,18 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    tv_startActId.setText(String.format("#%d", response.getInt("id")));
-                    tv_startActQuote.setText(response.getString("quote"));
-                    tv_startActAuthor.setText(response.getString("author"));
+                    int id = response.getInt("id");
+                    String quote = response.getString("quote");
+                    String author = response.getString("author");
+
+                    if (db.isFavorite(id)) {
+                        iv_startActIsFavorite.setImageResource(R.drawable.like);
+                    } else {
+                        iv_startActIsFavorite.setImageResource(R.drawable.dislike);
+                    }
+                    tv_startActId.setText(String.format("#%d", id));
+                    tv_startActQuote.setText(quote);
+                    tv_startActAuthor.setText(author);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
