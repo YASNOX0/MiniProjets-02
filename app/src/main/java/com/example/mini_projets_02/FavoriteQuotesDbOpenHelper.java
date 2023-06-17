@@ -65,6 +65,17 @@ public class FavoriteQuotesDbOpenHelper extends SQLiteOpenHelper {
         db.delete(FavoriteQuotesContract.Infos.TABLE_NAME, selection, selectionArgs);
     }
 
+    public boolean isQuoteSaved(int id) {
+        boolean isExists = false;
+        for (Quote quote : getAll()) {
+            if (quote.getId() == id) {
+                isExists = true;
+                break;
+            }
+        }
+        return isExists;
+    }
+
     public ArrayList<Quote> getAll() {
         ArrayList<Quote> quotes = new ArrayList<>();
         String[] projection = {

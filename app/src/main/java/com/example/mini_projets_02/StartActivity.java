@@ -2,7 +2,6 @@ package com.example.mini_projets_02;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -20,6 +19,8 @@ import com.example.mini_projets_02.models.Quote;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -79,6 +80,7 @@ public class StartActivity extends AppCompatActivity {
         //endregion
 
         db = new FavoriteQuotesDbOpenHelper(this);
+
         iv_startActIsFavorite.setOnClickListener(v -> {
             int id = Integer.parseInt(tv_startActId.getText().toString().substring(1));
             if (isFavorite) {
@@ -91,11 +93,6 @@ public class StartActivity extends AppCompatActivity {
                 db.saveQuote(new Quote(id, quote, author));
             }
             isFavorite = !isFavorite;
-
-            for (Quote quote : db.getAll()) {
-                Log.e("Sqlite", quote.toString());
-            }
-
         });
 
         btn_startActPass.setOnClickListener(v -> {
@@ -104,20 +101,27 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void getRandomQuote() {
+        Random random = new Random();
+        int randNbr = random.nextInt(5) + 1;
         RequestQueue queue = Volley.newRequestQueue(StartActivity.this);
-        String url = "https://dummyjson.com/quotes/random";
+        String url = "https://dummyjson.com/quotes/" + randNbr;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    tv_startActId.setText(String.format("#%d", response.getInt("id")));
+                    int id = response.getInt("id");
+                    tv_startActId.setText(String.format("#%d", id));
                     tv_startActQuote.setText(response.getString("quote"));
                     tv_startActAuthor.setText(response.getString("author"));
+                    if (db.isQuoteSaved(id)) {
+                        iv_startActIsFavorite.setImageResource(R.drawable.like);
+                    } else {
+                        iv_startActIsFavorite.setImageResource(R.drawable.dislike);
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
