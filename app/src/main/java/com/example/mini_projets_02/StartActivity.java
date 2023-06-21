@@ -2,7 +2,6 @@ package com.example.mini_projets_02;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -23,12 +22,12 @@ import org.json.JSONObject;
 
 public class StartActivity extends AppCompatActivity {
 
+    private final static int INVALID_ID = -1;
     TextView tv_startActQuote, tv_startActAuthor;
     Button btn_startActPass;
     ToggleButton tb_startActPinUnpin;
     SharedPreferences sharedPreferences;
     ImageView iv_startActIsFavorite;
-    boolean isFavorite = false;
     FavoriteQuotesDbOpenHelper db;
     TextView tv_startActId;
 
@@ -47,13 +46,17 @@ public class StartActivity extends AppCompatActivity {
         //region Pin | Unpin Quote
         sharedPreferences = getSharedPreferences("pinned-quote", MODE_PRIVATE);
         String pinnedQuote = sharedPreferences.getString("quote", null);
+        db = new FavoriteQuotesDbOpenHelper(this);
+        int id = sharedPreferences.getInt("id", INVALID_ID);
 
-        if (pinnedQuote == null) {
+        if (id == INVALID_ID) {
             getRandomQuote();
         } else {
             String author = sharedPreferences.getString("author", null);
             tv_startActQuote.setText(pinnedQuote);
             tv_startActAuthor.setText(author);
+            tv_startActId.setText(String.format("#%d", id));
+            iv_startActIsFavorite.setImageResource(db.isFavorite(id) ? R.drawable.like : R.drawable.dislike);
             tb_startActPinUnpin.setChecked(true);
         }
 
@@ -61,39 +64,42 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+                int pinnedQuoteId = INVALID_ID;
                 String quote = null;
                 String author = null;
 
                 if (isChecked) {
                     quote = tv_startActQuote.getText().toString();
                     author = tv_startActAuthor.getText().toString();
+                    pinnedQuoteId = Integer.parseInt(tv_startActId.getText().toString().substring(1));
+                    if (!db.isFavorite(pinnedQuoteId)) {
+                        iv_startActIsFavorite.setImageResource(R.drawable.like);
+                        db.saveQuote(new Quote(pinnedQuoteId, quote, author));
+                    }
                 } else {
                     getRandomQuote();
                 }
                 editor.putString("quote", quote);
                 editor.putString("author", author);
+                editor.putInt("id", pinnedQuoteId);
 
                 editor.commit();
             }
         });
         //endregion
 
-        db = new FavoriteQuotesDbOpenHelper(this);
+
         iv_startActIsFavorite.setOnClickListener(v -> {
-            int id = Integer.parseInt(tv_startActId.getText().toString().substring(1));
-            if (isFavorite) {
+            int i = Integer.parseInt(tv_startActId.getText().toString().substring(1));
+            if (db.isFavorite(i)) {
+                tb_startActPinUnpin.setChecked(false);
                 iv_startActIsFavorite.setImageResource(R.drawable.dislike);
-                db.deleteQuote(id);
+                db.deleteQuote(i);
             } else {
                 iv_startActIsFavorite.setImageResource(R.drawable.like);
                 String quote = tv_startActQuote.getText().toString();
                 String author = tv_startActAuthor.getText().toString();
-                db.saveQuote(new Quote(id, quote, author));
-            }
-            isFavorite = !isFavorite;
-
-            for (Quote quote : db.getAll()) {
-                Log.e("Sqlite", quote.toString());
+                db.saveQuote(new Quote(i, quote, author));
             }
 
         });
@@ -115,11 +121,8 @@ public class StartActivity extends AppCompatActivity {
                     String quote = response.getString("quote");
                     String author = response.getString("author");
 
-                    if (db.isFavorite(id)) {
-                        iv_startActIsFavorite.setImageResource(R.drawable.like);
-                    } else {
-                        iv_startActIsFavorite.setImageResource(R.drawable.dislike);
-                    }
+                    iv_startActIsFavorite.setImageResource(db.isFavorite(id) ? R.drawable.like : R.drawable.dislike);
+
                     tv_startActId.setText(String.format("#%d", id));
                     tv_startActQuote.setText(quote);
                     tv_startActAuthor.setText(author);
