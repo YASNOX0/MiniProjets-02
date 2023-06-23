@@ -1,10 +1,14 @@
 package com.example.mini_projets_02;
 
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -15,7 +19,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.mini_projets_02.models.BgColor;
 import com.example.mini_projets_02.models.Quote;
+import com.example.mini_projets_02.models.Setting;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +36,9 @@ public class StartActivity extends AppCompatActivity {
     ImageView iv_startActIsFavorite;
     FavoriteQuotesDbOpenHelper db;
     TextView tv_startActId;
+    Spinner spinner;
+    SettingsDbOpenHelper settingsDb;
+    private String defaultBgColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,7 @@ public class StartActivity extends AppCompatActivity {
         tb_startActPinUnpin = findViewById(R.id.tb_startActPinUnpin);
         iv_startActIsFavorite = findViewById(R.id.iv_startActIsFavorite);
         tv_startActId = findViewById(R.id.tv_startActId);
+        spinner = findViewById(R.id.spinner);
 
         //region Pin | Unpin Quote
         sharedPreferences = getSharedPreferences("pinned-quote", MODE_PRIVATE);
@@ -88,7 +98,7 @@ public class StartActivity extends AppCompatActivity {
         });
         //endregion
 
-
+        //region Like | Dislike Quote
         iv_startActIsFavorite.setOnClickListener(v -> {
             int i = Integer.parseInt(tv_startActId.getText().toString().substring(1));
             if (db.isFavorite(i)) {
@@ -103,12 +113,59 @@ public class StartActivity extends AppCompatActivity {
             }
 
         });
+        //endregion
+
+
+        //region Filling the table color with data
+        defaultBgColor = String.format("#%s", Integer.toHexString(((ColorDrawable) getWindow().getDecorView().getBackground()).getColor()).substring(2).toUpperCase());
+        BgColor[] bgColors = {new BgColor("Default", defaultBgColor),
+                new BgColor("LightSalmon", "#DDA0DD"),
+                new BgColor("Plum", "#FFA07A"),
+                new BgColor("PaleGreen", "#98FB98"),
+                new BgColor("CornflowerBlue", "#6495ED")
+        };
+
+        settingsDb = new SettingsDbOpenHelper(this);
+
+        settingsDb.addBgColors(bgColors);
+        //endregion
+
+        SpinnerAdapter spinnerAdapter = new SpinnerAdapter(this, settingsDb.getBgColors());
+
+        spinner.setAdapter(spinnerAdapter);
+
+        if (settingsDb.getSettingValue("bgColor") != null) {
+            int postion = spinnerAdapter.getBgColorItemPostion(settingsDb.getSettingValue("bgColor"));
+            spinner.setSelection(postion);
+        }
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedBgColorName = settingsDb.getBgColors().get(i).getName();
+                settingsDb.insertOrUpdateSetting(new Setting("bgColor", selectedBgColorName));
+                getWindow().getDecorView().setBackgroundColor(settingsDb.getBgColorCode(selectedBgColorName));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         btn_startActPass.setOnClickListener(v -> {
             finish();
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BgColor bgColor = new BgColor("Default", defaultBgColor);
+        settingsDb.updateBgColorCode(bgColor);
+    }
+
+    //region Method : getRandomQuote()
     private void getRandomQuote() {
         RequestQueue queue = Volley.newRequestQueue(StartActivity.this);
         String url = "https://dummyjson.com/quotes/random";
@@ -140,4 +197,5 @@ public class StartActivity extends AppCompatActivity {
 
         queue.add(jsonObjectRequest);
     }
+    //endregion
 }

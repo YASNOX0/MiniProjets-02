@@ -5,4 +5,6 @@
     <string name="pass">Pass</string>
     <string name="pin">Pin</string>
     <string name="unpin">Unpin</string>
+    <string name="color_name">Color name</string>
+    <string name="color_code">Color code</string>
 </resources>
