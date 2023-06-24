@@ -3,6 +3,7 @@ package com.example.mini_projets_02.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,11 +23,14 @@ public class FavoriteQuotesAdapter extends RecyclerView.Adapter<FavoriteQuotesAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tv_FavQuoteItemInfo;
+        TextView tv_FavQuoteItemQuote;
+        TextView tv_FavQuoteItemAuthor;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_FavQuoteItemInfo = itemView.findViewById(R.id.tv_FavQuoteItemInfo);
+            tv_FavQuoteItemQuote = itemView.findViewById(R.id.tv_FavQuoteItemQuote);
+            tv_FavQuoteItemAuthor = itemView.findViewById(R.id.tv_tv_FavQuoteItemAuthor);
         }
     }
 
@@ -40,7 +44,8 @@ public class FavoriteQuotesAdapter extends RecyclerView.Adapter<FavoriteQuotesAd
     @Override
     public void onBindViewHolder(@NonNull FavoriteQuotesAdapter.ViewHolder holder, int position) {
         Quote quote = quotes.get(position);
-        holder.tv_FavQuoteItemInfo.setText(quote.infos());
+        holder.tv_FavQuoteItemQuote.setText(quote.spannableQuote());
+        holder.tv_FavQuoteItemAuthor.setText(quote.spannableAuthor());
     }
 
     @Override
