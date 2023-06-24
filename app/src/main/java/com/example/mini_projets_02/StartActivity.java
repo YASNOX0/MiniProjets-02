@@ -2,13 +2,18 @@ package com.example.mini_projets_02;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
@@ -31,6 +36,9 @@ public class StartActivity extends AppCompatActivity {
     ImageView iv_startActIsFavorite;
     FavoriteQuotesDbOpenHelper db;
     TextView tv_startActId;
+    ImageView iv_startActBgColors;
+    private String[] bgColorsNames;
+    private String[] bgColorsCodes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,7 @@ public class StartActivity extends AppCompatActivity {
         tb_startActPinUnpin = findViewById(R.id.tb_startActPinUnpin);
         iv_startActIsFavorite = findViewById(R.id.iv_startActIsFavorite);
         tv_startActId = findViewById(R.id.tv_startActId);
+        iv_startActBgColors = findViewById(R.id.iv_startActBgColors);
 
         //region Pin | Unpin Quote
         sharedPreferences = getSharedPreferences("pinned-quote", MODE_PRIVATE);
@@ -89,7 +98,7 @@ public class StartActivity extends AppCompatActivity {
         });
         //endregion
 
-
+        //region Like | Dislike Quote
         iv_startActIsFavorite.setOnClickListener(v -> {
             int i = Integer.parseInt(tv_startActId.getText().toString().substring(1));
             if (db.isFavorite(i)) {
@@ -104,11 +113,41 @@ public class StartActivity extends AppCompatActivity {
             }
 
         });
+        //endregion
 
+        //region Handle btn_startActShowAllFavQuotes
         btn_startActShowAllFavQuotes.setOnClickListener(v -> {
-            Intent intent = new Intent(this , AllFavoriteQuotesActivity.class);
+            Intent intent = new Intent(this, AllFavoriteQuotesActivity.class);
             startActivity(intent);
         });
+        //endregion
+
+        bgColorsNames = getResources().getStringArray(R.array.bgColorsNames);
+        bgColorsCodes = getResources().getStringArray(R.array.bgColorsCodes);
+
+        registerForContextMenu(iv_startActBgColors);
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        for (String bgColorsName : bgColorsNames) {
+            menu.add(0, v.getId(), 0, bgColorsName);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        for (int i = 0; i < bgColorsNames.length; i++) {
+            if (item.getTitle().equals(bgColorsNames[i])) {
+                getWindow().getDecorView().setBackgroundColor(Color.parseColor(bgColorsCodes[i]));
+            }
+        }
+
+        return true;
     }
 
     private void getRandomQuote() {
