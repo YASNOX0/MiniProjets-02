@@ -5,4 +5,5 @@
     <string name="ShowAllFavoriteQuotes">Show All Favorite Quotes</string>
     <string name="pin">Pin</string>
     <string name="unpin">Unpin</string>
+    <string name="long_press_to_choose_your_layout">Long press to choose your layout</string>
 </resources>
