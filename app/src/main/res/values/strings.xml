@@ -6,4 +6,21 @@
     <string name="pin">Pin</string>
     <string name="unpin">Unpin</string>
     <string name="long_press_to_choose_your_layout">Long press to choose your layout</string>
+
+    <string-array name="bgColorsNames">
+        <item>Default</item>
+        <item>LightSalmon</item>
+        <item>Plum</item>
+        <item>PaleGreen</item>
+        <item>CornflowerBlue</item>
+    </string-array>
+
+    <string-array name="bgColorsCodes">
+        <item>#FFFBFE</item>
+        <item>#FFA07A</item>
+        <item>#DDA0DD</item>
+        <item>#98FB98</item>
+        <item>#6495ED</item>
+    </string-array>
+
 </resources>
