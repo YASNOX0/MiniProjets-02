@@ -36,8 +36,11 @@ public class StartActivity extends AppCompatActivity {
     ImageView iv_startActIsFavorite;
     FavoriteQuotesDbOpenHelper db;
     TextView tv_startActId;
-
     ImageView iv_startActBgColors;
+
+    private String[] bgColorsNames;
+    private String[] bgColorsCodes;
+    private int menuItemIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,26 +117,30 @@ public class StartActivity extends AppCompatActivity {
         });
         //endregion
 
+        //region Handle btn_startActShowAllFavQuotes
         btn_startActShowAllFavQuotes.setOnClickListener(v -> {
             Intent intent = new Intent(this, AllFavoriteQuotesActivity.class);
             startActivity(intent);
         });
+        //endregion
+
+        bgColorsNames = getResources().getStringArray(R.array.bgColorsNames);
+        bgColorsCodes = getResources().getStringArray(R.array.bgColorsCodes);
 
         registerForContextMenu(iv_startActBgColors);
-        iv_startActBgColors.setOnClickListener(view -> {
-            openContextMenu(view);
+
+        iv_startActBgColors.setOnClickListener(v -> {
+            openContextMenu(v);
         });
     }
-
-    String[] bgColorsNames = getResources().getStringArray(R.array.bgColorsNames);
-    String[] bgColorsCodes = getResources().getStringArray(R.array.bgColorsCodes);
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        String[] bgColorsNames = getResources().getStringArray(R.array.bgColorsNames);
 
-        for (String bgColor : bgColorsNames) {
-            menu.add(0, v.getId(), 0, bgColor);
+        for (int i = 0; i < bgColorsNames.length; i++) {
+            menu.add(0, v.getId(), 0, bgColorsNames[i]).setEnabled(menuItemIndex != i);
         }
     }
 
@@ -143,11 +150,13 @@ public class StartActivity extends AppCompatActivity {
         for (int i = 0; i < bgColorsNames.length; i++) {
             if (item.getTitle().equals(bgColorsNames[i])) {
                 getWindow().getDecorView().setBackgroundColor(Color.parseColor(bgColorsCodes[i]));
+                menuItemIndex = i;
+                break;
             }
         }
-
         return true;
     }
+
 
     private void getRandomQuote() {
         RequestQueue queue = Volley.newRequestQueue(StartActivity.this);
