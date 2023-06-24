@@ -43,6 +43,6 @@ public class Quote {
     @NonNull
     @Override
     public String toString() {
-        return String.format("Quote , %d , %s ,%s", this.getId(), this.getQuote(), this.getAuthor());
+        return String.format("[Quote %d] %s %n%s", this.getId(), this.getQuote(), this.getAuthor());
     }
 }

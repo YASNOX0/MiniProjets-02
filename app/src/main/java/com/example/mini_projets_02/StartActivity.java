@@ -1,5 +1,6 @@
 package com.example.mini_projets_02;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
@@ -24,7 +25,7 @@ public class StartActivity extends AppCompatActivity {
 
     private final static int INVALID_ID = -1;
     TextView tv_startActQuote, tv_startActAuthor;
-    Button btn_startActPass;
+    Button btn_startActShowAllFavQuotes;
     ToggleButton tb_startActPinUnpin;
     SharedPreferences sharedPreferences;
     ImageView iv_startActIsFavorite;
@@ -38,7 +39,7 @@ public class StartActivity extends AppCompatActivity {
 
         tv_startActQuote = findViewById(R.id.tv_startActQuote);
         tv_startActAuthor = findViewById(R.id.tv_startActAuthor);
-        btn_startActPass = findViewById(R.id.btn_startActPass);
+        btn_startActShowAllFavQuotes = findViewById(R.id.btn_startActShowAllFavQuotes);
         tb_startActPinUnpin = findViewById(R.id.tb_startActPinUnpin);
         iv_startActIsFavorite = findViewById(R.id.iv_startActIsFavorite);
         tv_startActId = findViewById(R.id.tv_startActId);
@@ -104,8 +105,9 @@ public class StartActivity extends AppCompatActivity {
 
         });
 
-        btn_startActPass.setOnClickListener(v -> {
-            finish();
+        btn_startActShowAllFavQuotes.setOnClickListener(v -> {
+            Intent intent = new Intent(this , AllFavoriteQuotesActivity.class);
+            startActivity(intent);
         });
     }
 
