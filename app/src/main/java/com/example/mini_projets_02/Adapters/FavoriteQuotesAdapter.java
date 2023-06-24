@@ -17,11 +17,13 @@ public class FavoriteQuotesAdapter extends RecyclerView.Adapter<FavoriteQuotesAd
 
     private ArrayList<Quote> quotes;
 
-    public FavoriteQuotesAdapter(ArrayList<Quote> quotes){
+    public FavoriteQuotesAdapter(ArrayList<Quote> quotes) {
         this.quotes = quotes;
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_FavQuoteItemInfo;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_FavQuoteItemInfo = itemView.findViewById(R.id.tv_FavQuoteItemInfo);
@@ -31,13 +33,14 @@ public class FavoriteQuotesAdapter extends RecyclerView.Adapter<FavoriteQuotesAd
     @NonNull
     @Override
     public FavoriteQuotesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorite_quote, parent , false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favorite_quote, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteQuotesAdapter.ViewHolder holder, int position) {
-        holder.tv_FavQuoteItemInfo.setText(quotes.get(position).toString());
+        Quote quote = quotes.get(position);
+        holder.tv_FavQuoteItemInfo.setText(quote.infos());
     }
 
     @Override
